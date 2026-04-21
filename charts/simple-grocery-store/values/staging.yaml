@@ -1,0 +1,150 @@
+# Staging values for simple-grocery-store
+
+# Product service configuration
+productService:
+  name: product-service
+  image:
+    repository: product-service
+    tag: 6
+    pullPolicy: IfNotPresent
+
+  replicaCount: 1
+
+  service:
+    type: ClusterIP
+    port: 5001
+    targetPort: 5001
+    name: product-service
+
+  deployment:
+    name: product-deployment
+
+  env:
+    NODE_ENV: production
+    MONGODB_URI: "" # Set this to your CosmosDB connection string for products
+
+  secret:
+    create: true
+    name: product-secrets
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+  podSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  containerSecurityContext:
+    enabled: true
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    dropCapabilities:
+      - ALL
+
+# Cart service configuration
+cartService:
+  name: cart-service
+  image:
+    repository: cart-service
+    tag: 6
+    pullPolicy: IfNotPresent
+
+  replicaCount: 1
+
+  service:
+    type: ClusterIP
+    port: 5002
+    targetPort: 5002
+    name: cart-service
+
+  deployment:
+    name: cart-deployment
+
+  env:
+    NODE_ENV: production
+
+  resources:
+    limits:
+      cpu: 300m
+      memory: 256Mi
+    requests:
+      cpu: 150m
+      memory: 128Mi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+  podSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  containerSecurityContext:
+    enabled: true
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    dropCapabilities:
+      - ALL
+
+# Frontend configuration
+frontend:
+  name: frontend
+  image:
+    repository: frontend
+    tag: 6
+    pullPolicy: IfNotPresent
+  
+  replicaCount: 1
+  
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 80
+    name: frontend-service
+  
+  deployment:
+    name: frontend-deployment
+  
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podSecurityContext:
+    enabled: false
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  containerSecurityContext:
+    enabled: true
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    dropCapabilities:
+      - ALL
+
+# Common labels
+commonLabels:
+  app.kubernetes.io/name: simple-grocery-store
+  app.kubernetes.io/instance: simple-grocery-store
+  app.kubernetes.io/version: "1.0.0"
+  app.kubernetes.io/managed-by: Helm
