@@ -37,11 +37,13 @@ spec:
         env:
         - name: NODE_ENV
           value: {{ .Values.productService.env.NODE_ENV | quote }}
+        {{- if .Values.productService.env.MONGODB_URI }}
         - name: MONGO_URI
           valueFrom:
             secretKeyRef:
               name: {{ .Values.productService.secret.name }}
               key: mongodb-uri
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /api/products
